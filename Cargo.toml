@@ -4,3 +4,4 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+chip8 = { git = "https://github.com/daniel-j-anderson-dev/chip8.git"}
