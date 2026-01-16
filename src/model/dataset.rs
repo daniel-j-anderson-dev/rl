@@ -1,18 +1,18 @@
-use burn::{Tensor, prelude::Backend, tensor::TensorData};
+use burn::{
+    Tensor,
+    prelude::Backend,
+    tensor::{Int, TensorData},
+};
 
 use crate::tictactoe::*;
 
 impl Grid {
-    /// shape = [1, 2, 3, 3]
-    /// meaning: [batch_index, player_index, row_index, column_index]
+    /// shape = [2, 3, 3]
+    /// meaning: [player_index, row_index, column_index]
     /// player_index == 0 is `Cell::X`
     /// player_index == 1 is `Cell::O`
-    pub fn to_tensor<B: Backend>(&self, device: &B::Device) -> Tensor<B, { Self::RANK }> {
-        let batch_size = 1;
-        let player_count = 2;
-        let row_count = 3;
-        let column_count = 3;
-        let shape = [batch_size, player_count, row_count, column_count];
+    pub fn to_tensor<B: Backend>(&self, device: &B::Device) -> Tensor<B, 3> {
+        const SHAPE: [usize; 3] = [PLAYER_COUNT, ROW_COUNT, COLUMN_COUNT];
         let serialized_data = (0..2)
             .flat_map(move |player_index| {
                 (0..3).flat_map(move |row_index| {
@@ -26,6 +26,15 @@ impl Grid {
                 })
             })
             .collect();
-        Tensor::from_data(TensorData::new(serialized_data, shape), device)
+        Tensor::from_data(TensorData::new(serialized_data, SHAPE), device)
     }
+}
+
+pub struct TicTacToeBatch<B: Backend> {
+    /// Shape: [batch_size, player_count, row_count, column_count]
+    pub grids: Tensor<B, 4>,
+    /// Shape: [batch_size, player_count]
+    /// targets[b][0] == the index where `X` should be placed
+    /// targets[b][1] == the index where `O` should be placed
+    pub targets: Tensor<B, 3, Int>,
 }
