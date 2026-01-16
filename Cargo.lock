@@ -4762,6 +4762,7 @@ dependencies = [
  "chip8",
  "constcat",
  "itertools 0.14.0",
+ "serde",
 ]
 
 [[package]]

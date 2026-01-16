@@ -8,3 +8,4 @@ burn = { version = "0.20.0", features = ["dataset", "train", "wgpu"] }
 chip8 = { git = "https://github.com/daniel-j-anderson-dev/chip8.git" }
 constcat = "0.6.1"
 itertools = "0.14.0"
+serde = "1.0.228"
