@@ -3,9 +3,38 @@ use burn::{
     module::Module,
     nn::{Linear, LinearConfig, Relu},
     prelude::Backend,
+    tensor::TensorData,
 };
 
-use crate::tictactoe::{grid::Grid, index::Index};
+use crate::tictactoe::*;
+
+impl Grid {
+    /// shape = [2, 3, 3]
+    /// meaning: [player_index, row_index, column_index]
+    /// player_index == 0 is `Cell::X`
+    /// player_index == 1 is `Cell::O`
+    pub fn to_tensor<B: Backend>(&self, device: &B::Device) -> Tensor<B, { Self::RANK }> {
+        Tensor::from_data(
+            TensorData::new(
+                (0..2)
+                    .flat_map(move |player_index| {
+                        (0..3).flat_map(move |row_index| {
+                            (0..3).map(move |column_index| {
+                                match (player_index, self.cells[row_index][column_index]) {
+                                    (0, X) => 1u8,
+                                    (1, O) => 1,
+                                    _ => 0,
+                                }
+                            })
+                        })
+                    })
+                    .collect(),
+                Grid::SHAPE,
+            ),
+            device,
+        )
+    }
+}
 
 #[derive(Debug, Module)]
 pub struct TicTacToeNetwork<B: Backend> {
@@ -23,10 +52,10 @@ impl<B: Backend> TicTacToeNetwork<B> {
             activation: Relu,
         }
     }
-    
+
     /// - input:
     ///     - shape: [player_index, row_index, column_index]
-    ///     - the value in each cell represents 
+    ///     - the value in each cell represents
     /// - output:
     ///     - shape: [player_index, row_index, column_index]
     ///     - the value in each cell represents a confidence of the best piece placement for a player at a grid index
@@ -35,7 +64,6 @@ impl<B: Backend> TicTacToeNetwork<B> {
         let x = self.activation.forward(x);
         let x = self.hidden.forward(x);
         let x = self.activation.forward(x);
-        let x = self.output.forward(x);
-        x
+        self.output.forward(x)
     }
 }
