@@ -1,5 +1,6 @@
 use burn::{
     Tensor,
+    data::dataloader::batcher::Batcher,
     prelude::Backend,
     tensor::{Int, TensorData},
 };
@@ -40,3 +41,9 @@ pub struct TicTacToeBatch<B: Backend> {
 }
 
 pub struct TicTacToeBatcher {}
+
+impl<B: Backend> Batcher<B, Grid, TicTacToeBatch<B>> for TicTacToeBatcher {
+    fn batch(&self, items: Vec<Grid>, device: &<B as Backend>::Device) -> TicTacToeBatch<B> {
+        todo!()
+    }
+}
