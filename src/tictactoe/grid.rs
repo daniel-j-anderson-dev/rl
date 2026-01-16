@@ -1,6 +1,7 @@
 use itertools::Itertools;
 
 use crate::tictactoe::{
+    COLUMN_COUNT, PLAYER_COUNT, ROW_COUNT,
     cell::Cell::{self, *},
     index::*,
 };
@@ -14,7 +15,7 @@ pub fn all_valid_grids() -> impl Iterator<Item = Grid> {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Grid {
-    pub(crate) cells: [[Cell; Grid::SIZE]; Grid::SIZE],
+    pub(crate) cells: [[Cell; ROW_COUNT]; COLUMN_COUNT],
 }
 impl Grid {
     pub const AREA: usize = 9;
@@ -33,40 +34,34 @@ impl Grid {
         &self.cells
     }
 
+    pub fn count_cells(&self) -> (usize, usize, usize) {
+        self.cells.as_flattened().iter().fold(
+            (0usize, 0usize, 0usize),
+            |(x_count, o_count, empty_count), cell| match cell {
+                Empty => (x_count, o_count, empty_count + 1),
+                O => (x_count, o_count + 1, empty_count),
+                X => (x_count + 1, o_count, empty_count),
+            },
+        )
+    }
+
     pub fn is_valid(&self) -> bool {
-        let (x_count, o_count, _empty_count) =
-            self.cells
-                .as_flattened()
-                .iter()
-                .fold((0usize, 0usize, 0usize), |(x, o, e), cell| match cell {
-                    Empty => (x, o, e + 1),
-                    O => (x, o + 1, e),
-                    X => (x + 1, o, e),
-                });
+        let (x_count, o_count, _empty_count) = self.count_cells();
 
         if x_count != o_count && x_count != o_count + 1 {
             return false;
         }
 
-        match self.winner() {
-            Empty => true,
-            X => x_count == o_count + 1,
-            O => x_count == o_count,
+        match self.game_over() {
+            Some(GameOver::X) => x_count == o_count + 1,
+            Some(GameOver::O) => x_count == o_count,
+            _ => true,
         }
     }
 
-    pub fn winner(&self) -> Cell {
-        Index::GROUPS
-            .iter()
-            .find_map(|&[a, b, c]| {
-                let cell = self[a];
-                if cell != Empty && self[b] == cell && self[c] == cell {
-                    Some(cell)
-                } else {
-                    None
-                }
-            })
-            .unwrap_or(Empty)
+    pub fn is_x_turn(&self) -> bool {
+        let (x_count, o_count, _empty_count) = self.count_cells();
+        x_count != o_count && x_count != o_count + 1
     }
 }
 impl core::ops::Index<Index> for Grid {
@@ -96,4 +91,30 @@ impl core::fmt::Display for Grid {
         writeln!(w)?;
         Ok(())
     }
+}
+impl Grid {
+    pub fn game_over(&self) -> Option<GameOver> {
+        let winner = Index::GROUPS.iter().find_map(|&[a, b, c]| {
+            let cell = self[a];
+            if cell != Empty && self[b] == cell && self[c] == cell {
+                Some(cell)
+            } else {
+                None
+            }
+        });
+
+        match winner {
+            Some(X) => Some(GameOver::X),
+            Some(O) => Some(GameOver::O),
+            None if self.cells.as_flattened().iter().all(|&c| c != Empty) => Some(GameOver::Draw),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GameOver {
+    X,
+    O,
+    Draw,
 }
