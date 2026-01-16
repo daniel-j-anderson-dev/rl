@@ -101,17 +101,21 @@ pub struct TicTacToeBatch<B: Backend> {
 
 pub struct TicTacToeBatcher {}
 
-impl<B: Backend> Batcher<B, Grid, TicTacToeBatch<B>> for TicTacToeBatcher {
-    fn batch(&self, items: Vec<Grid>, device: &<B as Backend>::Device) -> TicTacToeBatch<B> {
+impl<B: Backend> Batcher<B, (Grid, Index), TicTacToeBatch<B>> for TicTacToeBatcher {
+    fn batch(
+        &self,
+        items: Vec<(Grid, Index)>,
+        device: &<B as Backend>::Device,
+    ) -> TicTacToeBatch<B> {
         let (inputs, targets) = items.iter().fold(
             (Vec::new(), Vec::new()),
-            |(mut items, mut targets), grid| {
+            |(mut items, mut targets), (grid, best_move)| {
                 items.push(Tensor::<B, 2, _>::from_data(
                     grid.perspective_view(grid.current_turn()),
                     device,
                 ));
                 targets.push(Tensor::<_, 1, _>::from_data(
-                    grid.find_best_move(grid.current_turn()).one_hot_encode(),
+                    best_move.one_hot_encode(),
                     device,
                 ));
                 (items, targets)
