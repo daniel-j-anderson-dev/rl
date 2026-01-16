@@ -20,6 +20,7 @@ impl<B: Backend> TicTacToeNetwork<B> {
         // convert targets from one-hot-encoding
         let targets = target.argmax(1).reshape([output.dims()[0]]);
 
+        // calculate cross entropy loss
         let loss = CrossEntropyLossConfig::new()
             .init(&output.device())
             .forward(output.clone(), targets.clone());
@@ -32,7 +33,6 @@ impl<B: AutodiffBackend> TrainStep for TicTacToeNetwork<B> {
     type Input = TicTacToeBatch<B>;
     type Output = ClassificationOutput<B>;
     fn step(&self, batch: Self::Input) -> TrainOutput<Self::Output> {
-        // feed the batch through the network
         let (loss, output, targets) =
             self.forward_track_cross_entropy_loss(batch.inputs, batch.targets);
         let output = ClassificationOutput::new(loss.clone(), output, targets);
