@@ -1,6 +1,7 @@
 pub mod cell;
 pub mod grid;
 pub mod index;
+pub mod model;
 
 pub use self::{
     cell::Cell::{self, *},
