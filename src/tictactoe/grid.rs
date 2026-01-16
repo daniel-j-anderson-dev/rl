@@ -6,7 +6,7 @@ use crate::tictactoe::{
 };
 
 pub fn all_valid_grids() -> impl Iterator<Item = Grid> {
-    core::iter::repeat_n(Cell::VARIANTS, 9)
+    core::iter::repeat_n(Cell::VARIANTS, Index::TOTAL_COUNT)
         .multi_cartesian_product()
         .filter_map(Grid::from_cells)
         .filter(Grid::is_valid)
