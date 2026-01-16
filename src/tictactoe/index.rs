@@ -54,6 +54,8 @@ impl Index {
             I22 => (2, 2),
         }
     }
+    /// The total count of all indexes: 9
+    pub const TOTAL_COUNT: usize = Self::ALL.len();
     pub const ALL: &[Self; 9] = &[I00, I01, I02, I10, I11, I12, I20, I21, I22];
     pub const ROWS: &[[Self; 3]; 3] = &[[I00, I01, I02], [I10, I11, I12], [I20, I21, I22]];
     pub const COLUMNS: &[[Self; 3]; 3] = &[[I00, I10, I20], [I01, I11, I21], [I02, I12, I22]];

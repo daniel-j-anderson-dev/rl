@@ -7,3 +7,7 @@ pub use self::{
     grid::Grid,
     index::Index::{self, *},
 };
+
+pub const ROW_COUNT: usize = 3;
+pub const COLUMN_COUNT: usize = 3;
+pub const PLAYER_COUNT: usize = 2;
