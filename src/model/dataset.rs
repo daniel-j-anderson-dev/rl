@@ -59,7 +59,7 @@ impl Grid {
 
     /// Returns a single board where 'perspective' cells are 1.0,
     /// opponent cells are -1.0, and empty are 0.0.
-    pub fn perspective_view(&self, perspective: Cell) -> [[f32; 3]; 3] {
+    pub fn encode(&self, perspective: Cell) -> [[f32; 3]; 3] {
         let opponent = if perspective == X { O } else { X };
         core::array::from_fn(|row_index| {
             core::array::from_fn(|column_index| {
