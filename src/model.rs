@@ -9,11 +9,11 @@ use burn::{
 use crate::tictactoe::*;
 
 impl Grid {
-    /// shape = [2, 3, 3]
-    /// meaning: [player_index, row_index, column_index]
+    /// shape = [1, 2, 3, 3]
+    /// meaning: [batch_index, player_index, row_index, column_index]
     /// player_index == 0 is `Cell::X`
     /// player_index == 1 is `Cell::O`
-    pub fn to_tensor<B: Backend>(&self, device: &B::Device) -> Tensor<B, { Self::RANK }> {
+    pub fn to_tensor<B: Backend>(&self, device: &B::Device) -> Tensor<B, { Self::RANK + 1 }> {
         Tensor::from_data(
             TensorData::new(
                 (0..2)
