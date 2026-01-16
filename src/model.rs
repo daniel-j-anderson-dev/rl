@@ -2,12 +2,24 @@ pub mod dataset;
 
 use burn::{
     Tensor,
+    config::Config,
     module::Module,
     nn::{Linear, LinearConfig, Relu},
     prelude::Backend,
 };
 
 use crate::tictactoe::*;
+
+#[derive(Debug, Config)]
+pub struct TicTacToeNetworkConfig {
+    batch_size: usize,
+}
+impl TicTacToeNetworkConfig {
+    pub fn init<B: Backend>(self, device: &B::Device) -> TicTacToeNetwork<B> {
+        let Self { batch_size } = self;
+        TicTacToeNetwork::init(device, batch_size)
+    }
+}
 
 #[derive(Debug, Module)]
 pub struct TicTacToeNetwork<B: Backend> {
@@ -17,27 +29,32 @@ pub struct TicTacToeNetwork<B: Backend> {
     activation: Relu,
 }
 impl<B: Backend> TicTacToeNetwork<B> {
-    pub fn init(device: &B::Device) -> Self {
+    pub fn init(device: &B::Device, batch_size: usize) -> Self {
         Self {
-            input: LinearConfig::new(Grid::VOLUME, 64).init(device),
+            input: LinearConfig::new(batch_size * PLAYER_COUNT * ROW_COUNT * COLUMN_COUNT, 64)
+                .init(device),
             hidden: LinearConfig::new(64, 64).init(device),
-            output: LinearConfig::new(64, Index::ALL.len()).init(device),
+            output: LinearConfig::new(64, Index::TOTAL_COUNT * PLAYER_COUNT).init(device),
             activation: Relu,
         }
     }
 
     /// - input:
-    ///     - shape: [player_index, row_index, column_index]
+    ///     - shape: [batch_size, player_index, row_index, column_index] == [batch_size, 2, 3, 3]
     ///     - the value in each cell represents
     /// - output:
-    ///     - shape: [player_index, row_index, column_index]
+    ///     - shape: [batch_size, player_index, serialized_grid_index]
     ///     - the value in each cell represents a confidence of the best piece placement for a player at a grid index
-    pub fn forward(&self, x: Tensor<B, { Grid::RANK }>) -> Tensor<B, { Grid::RANK }> {
+    pub fn forward(&self, x: Tensor<B, 4>) -> Tensor<B, 3> {
+        let [batch_size, ..] = x.dims();
         let x = self.input.forward(x);
         let x = self.activation.forward(x);
         let x = self.hidden.forward(x);
         let x = self.activation.forward(x);
-        self.output.forward(x)
+        let x = self.output.forward(x);
+
+        // flatten the last two dimensions
+        x.reshape([batch_size, 2, 9])
     }
 }
 // impl<B:Backend> TraintStep<> for TicTacToeNetwork<B> {
