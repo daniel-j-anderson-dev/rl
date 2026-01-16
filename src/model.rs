@@ -47,16 +47,18 @@ impl<B: Backend> TicTacToeNetwork<B> {
     ///     - the value in each cell represents a confidence of the best piece placement for a player at a grid index
     pub fn forward(&self, x: Tensor<B, 4>) -> Tensor<B, 3> {
         let [batch_size, ..] = x.dims();
+        // flatten player_index, row_index, column_index
+        let x = x.reshape([batch_size, PLAYER_COUNT * ROW_COUNT * COLUMN_COUNT]);
         let x = self.input.forward(x);
         let x = self.activation.forward(x);
         let x = self.hidden.forward(x);
         let x = self.activation.forward(x);
         let x = self.output.forward(x);
 
-        // flatten the last two dimensions
-        x.reshape([batch_size, 2, 9])
+        // separate `X`s from `O`s and flatten the last row and col indexes
+        x.reshape([batch_size, PLAYER_COUNT, ROW_COUNT * COLUMN_COUNT])
     }
 }
-// impl<B:Backend> TraintStep<> for TicTacToeNetwork<B> {
+// impl<B:Backend> TrainStep<> for TicTacToeNetwork<B> {
 
 // }
