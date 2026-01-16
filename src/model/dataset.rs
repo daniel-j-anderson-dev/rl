@@ -107,24 +107,21 @@ pub struct TicTacToeBatcher {}
 
 impl<B: Backend> Batcher<B, Grid, TicTacToeBatch<B>> for TicTacToeBatcher {
     fn batch(&self, items: Vec<Grid>, device: &<B as Backend>::Device) -> TicTacToeBatch<B> {
-        let inputs = items
-            .iter()
-            .map(|grid| {
-                let perspective = if grid.is_x_turn() { X } else { O };
-                Tensor::<B, 2, _>::from_data(grid.perspective_view(perspective), device)
-            })
-            .collect::<Vec<_>>();
+        let (inputs, targets) = items.iter().fold(
+            (Vec::new(), Vec::new()),
+            |(mut items, mut targets), grid| {
+                items.push(Tensor::<B, 2, _>::from_data(
+                    grid.perspective_view(grid.current_turn()),
+                    device,
+                ));
+                targets.push(Tensor::<_, 1, _>::from_data(
+                    grid.find_best_move(grid.current_turn()).one_hot_encode(),
+                    device,
+                ));
+                (items, targets)
+            },
+        );
         let inputs = Tensor::stack(inputs, 0);
-
-        let targets = items
-            .iter()
-            .map(|grid| {
-                [X, O]
-                    .map(|player| grid.find_best_move(player))
-                    .map(Index::one_hot_encode)
-            })
-            .map(|data| Tensor::<_, 2, _>::from_data(data, device))
-            .collect::<Vec<_>>();
         let targets = Tensor::stack(targets, 0);
 
         TicTacToeBatch { inputs, targets }
