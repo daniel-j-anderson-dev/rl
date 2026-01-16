@@ -6,13 +6,6 @@ use crate::tictactoe::{
     index::*,
 };
 
-pub fn all_valid_grids() -> impl Iterator<Item = Grid> {
-    core::iter::repeat_n(Cell::VARIANTS, Index::TOTAL_COUNT)
-        .multi_cartesian_product()
-        .filter_map(Grid::from_cells)
-        .filter(Grid::is_valid)
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Grid {
     pub(crate) cells: [[Cell; ROW_COUNT]; COLUMN_COUNT],
@@ -20,6 +13,12 @@ pub struct Grid {
 impl Grid {
     pub const AREA: usize = 9;
     pub const SIZE: usize = 3;
+
+    pub fn all() -> impl Iterator<Item = Grid> {
+        core::iter::repeat_n(Cell::VARIANTS, Index::TOTAL_COUNT)
+            .multi_cartesian_product()
+            .filter_map(Self::from_cells)
+    }
 
     pub fn from_cells<A: AsRef<[Cell]>>(cells: A) -> Option<Self> {
         let cells = cells.as_ref();
