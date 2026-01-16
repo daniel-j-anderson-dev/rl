@@ -18,6 +18,7 @@ pub struct Grid {
 }
 impl Grid {
     pub const AREA: usize = 9;
+    pub const VOLUME: usize = 2 * 3 * 3;
     pub const SIZE: usize = 3;
     pub const RANK: usize = 3;
     pub const SHAPE: [usize; Self::RANK] = [2, Self::SIZE, Self::SIZE];
