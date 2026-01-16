@@ -6,7 +6,7 @@ use burn::{
     train::{ClassificationOutput, InferenceStep, TrainOutput, TrainStep},
 };
 
-use crate::model::{TicTacToeNetwork, dataset::TicTacToeBatch};
+use crate::tictactoe::model::{TicTacToeNetwork, dataset::TicTacToeBatch};
 
 impl<B: Backend> TicTacToeNetwork<B> {
     pub fn forward_track_cross_entropy_loss(
