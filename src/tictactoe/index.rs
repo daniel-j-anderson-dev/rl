@@ -65,7 +65,7 @@ impl Index {
 use Index::*;
 #[test]
 fn generate_index_variants() {
-    use crate::tictactoe::game::grid::Grid;
+    use crate::tictactoe::grid::Grid;
 
     let mut k = 0;
     for i in 0..Grid::AREA {

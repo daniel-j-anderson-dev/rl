@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-use crate::tictactoe::game::{
+use crate::tictactoe::{
     cell::Cell::{self, *},
     index::{self, *},
 };

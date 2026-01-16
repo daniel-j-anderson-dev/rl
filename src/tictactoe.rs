@@ -1,1 +1,3 @@
-pub mod game;
+pub mod cell;
+pub mod grid;
+pub mod index;

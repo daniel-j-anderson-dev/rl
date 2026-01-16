@@ -1,4 +1,4 @@
-use rl::tictactoe::game::{cell::Cell, grid::Grid, index::Index};
+use rl::tictactoe::{cell::Cell, grid::Grid, index::Index};
 
 use std::io::Write;
 
@@ -17,7 +17,7 @@ fn main() {
         .filter_map(Grid::from_cells)
         .filter(Grid::is_valid)
         .collect::<Vec<_>>();
-    
+
     for grid in valid {
         writeln!(f, "{}", grid).unwrap();
     }
