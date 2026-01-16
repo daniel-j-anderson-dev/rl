@@ -7,8 +7,6 @@ use burn::{
 
 use crate::tictactoe::{grid::Grid, index::Index};
 
-// input: tictactoe grid
-// output: where to place piece (for both x and o)
 #[derive(Debug, Module)]
 pub struct TicTacToeNetwork<B: Backend> {
     input: Linear<B>,
@@ -25,7 +23,13 @@ impl<B: Backend> TicTacToeNetwork<B> {
             activation: Relu,
         }
     }
-
+    
+    /// - input:
+    ///     - shape: [player_index, row_index, column_index]
+    ///     - the value in each cell represents 
+    /// - output:
+    ///     - shape: [player_index, row_index, column_index]
+    ///     - the value in each cell represents a confidence of the best piece placement for a player at a grid index
     pub fn forward(&self, x: Tensor<B, { Grid::RANK }>) -> Tensor<B, { Grid::RANK }> {
         let x = self.input.forward(x);
         let x = self.activation.forward(x);
