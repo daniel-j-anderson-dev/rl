@@ -1,4 +1,5 @@
 pub mod dataset;
+pub mod train;
 
 use burn::{
     Tensor,
@@ -54,6 +55,3 @@ impl<B: Backend> TicTacToeNetwork<B> {
         x
     }
 }
-// impl<B:Backend> TrainStep<> for TicTacToeNetwork<B> {
-
-// }

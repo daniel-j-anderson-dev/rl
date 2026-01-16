@@ -63,6 +63,10 @@ impl Grid {
         let (x_count, o_count, _empty_count) = self.count_cells();
         x_count != o_count && x_count != o_count + 1
     }
+
+    pub fn current_turn(&self) -> Cell {
+        if self.is_x_turn() { X } else { O }
+    }
 }
 impl core::ops::Index<Index> for Grid {
     type Output = Cell;
