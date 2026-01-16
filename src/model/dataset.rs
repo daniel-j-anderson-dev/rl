@@ -1,10 +1,65 @@
 use std::i32;
 
-use burn::{Tensor, data::dataloader::batcher::Batcher, prelude::Backend, tensor::Bool};
+use burn::{Tensor, data::dataloader::batcher::Batcher, prelude::Backend};
 
 use crate::tictactoe::{grid::GameOver, *};
 
 impl Grid {
+    /// minimax: https://en.wikipedia.org/wiki/Minimax#Combinatorial_game_theory
+    pub fn find_best_move(&self, player: Cell) -> Index {
+        assert!(player != Empty);
+
+        let mut best_score = if player == X { i32::MIN } else { i32::MAX };
+        let mut best_move = I00;
+        for &i in Index::ALL.iter().filter(|&&i| self[i] == Empty) {
+            let mut next_grid = *self;
+            next_grid[i] = player;
+
+            let score = next_grid.minimax(player == O);
+
+            if player == X {
+                if score > best_score {
+                    best_score = score;
+                    best_move = i;
+                }
+            } else {
+                if score < best_score {
+                    best_score = score;
+                    best_move = i;
+                }
+            }
+        }
+        best_move
+    }
+
+    fn minimax(&self, is_x_turn: bool) -> i32 {
+        match self.game_over() {
+            Some(GameOver::X) => 1,
+            Some(GameOver::O) => -1,
+            Some(GameOver::Draw) => 0,
+            None => {
+                let possible_moves = Index::ALL.iter().filter(|&&i| self[i] == Empty);
+                if is_x_turn {
+                    possible_moves
+                        .map(|&i| {
+                            let mut next = *self;
+                            next[i] = X;
+                            next.minimax(false)
+                        })
+                        .max()
+                } else {
+                    possible_moves
+                        .map(|&i| {
+                            let mut next = *self;
+                            next[i] = O;
+                            next.minimax(true)
+                        })
+                        .min()
+                }
+                .expect("non-terminal position must have legal moves")
+            }
+        }
+    }
 
     /// Returns a single board where 'perspective' cells are 1.0,
     /// opponent cells are -1.0, and empty are 0.0.
