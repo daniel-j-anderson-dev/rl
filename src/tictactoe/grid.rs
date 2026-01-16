@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 use crate::tictactoe::{
     cell::Cell::{self, *},
-    index::{self, *},
+    index::*,
 };
 
 pub fn all_valid_grids() -> impl Iterator<Item = Grid> {
@@ -14,7 +14,7 @@ pub fn all_valid_grids() -> impl Iterator<Item = Grid> {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Grid {
-    cells: [[Cell; Grid::SIZE]; Grid::SIZE],
+    pub(crate) cells: [[Cell; Grid::SIZE]; Grid::SIZE],
 }
 impl Grid {
     pub const AREA: usize = 9;
@@ -37,7 +37,7 @@ impl Grid {
     }
 
     pub fn is_valid(&self) -> bool {
-        let (x_count, o_count, empty_count) =
+        let (x_count, o_count, _empty_count) =
             self.cells
                 .as_flattened()
                 .iter()
@@ -60,7 +60,7 @@ impl Grid {
 
     pub fn winner(&self) -> Cell {
         Index::GROUPS
-            .into_iter()
+            .iter()
             .find_map(|&[a, b, c]| {
                 let cell = self[a];
                 if cell != Empty && self[b] == cell && self[c] == cell {
@@ -96,7 +96,7 @@ impl core::fmt::Display for Grid {
             }
             writeln!(w, "\n+-+-+-+")?;
         }
-        writeln!(w, "")?;
+        writeln!(w)?;
         Ok(())
     }
 }
