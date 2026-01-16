@@ -51,7 +51,6 @@ impl<B: Backend> TicTacToeNetwork<B> {
         let x = self.activation.forward(x);
         let x = self.hidden.forward(x);
         let x = self.activation.forward(x);
-        let x = self.output.forward(x);
-        x
+        self.output.forward(x)
     }
 }

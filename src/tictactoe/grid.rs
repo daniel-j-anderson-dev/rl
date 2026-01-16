@@ -1,7 +1,7 @@
 use itertools::Itertools;
 
 use crate::tictactoe::{
-    COLUMN_COUNT, PLAYER_COUNT, ROW_COUNT,
+    COLUMN_COUNT, ROW_COUNT,
     cell::Cell::{self, *},
     index::*,
 };

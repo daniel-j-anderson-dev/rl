@@ -1,5 +1,3 @@
-use std::i32;
-
 use burn::{Tensor, data::dataloader::batcher::Batcher, prelude::Backend};
 
 use crate::tictactoe::{grid::GameOver, *};
@@ -22,11 +20,9 @@ impl Grid {
                     best_score = score;
                     best_move = i;
                 }
-            } else {
-                if score < best_score {
-                    best_score = score;
-                    best_move = i;
-                }
+            } else if score < best_score {
+                best_score = score;
+                best_move = i;
             }
         }
         best_move
