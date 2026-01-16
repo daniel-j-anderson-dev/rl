@@ -1,13 +1,13 @@
+pub mod dataset;
+
 use burn::{
     Tensor,
     module::Module,
     nn::{Linear, LinearConfig, Relu},
     prelude::Backend,
-    tensor::TensorData,
 };
 
 use crate::tictactoe::*;
-pub mod dataset;
 
 #[derive(Debug, Module)]
 pub struct TicTacToeNetwork<B: Backend> {
