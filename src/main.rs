@@ -1,4 +1,4 @@
-use rl::tictactoe::{cell::Cell, grid::Grid, index::Index};
+use rl::tictactoe::*;
 
 use std::io::Write;
 
