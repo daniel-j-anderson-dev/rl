@@ -55,7 +55,7 @@ impl Index {
             I22 => (2, 2),
         }
     }
-    pub const ALL: &[Self] = &[I00, I01, I02, I10, I11, I12, I20, I21, I22];
+    pub const ALL: &[Self; 9] = &[I00, I01, I02, I10, I11, I12, I20, I21, I22];
     pub const ROWS: &[[Self; 3]; 3] = &[[I00, I01, I02], [I10, I11, I12], [I20, I21, I22]];
     pub const COLUMNS: &[[Self; 3]; 3] = &[[I00, I10, I20], [I01, I11, I21], [I02, I12, I22]];
     pub const DIAGONALS: &[[Self; 3]; 2] = &[[I00, I11, I22], [I20, I11, I02]];
