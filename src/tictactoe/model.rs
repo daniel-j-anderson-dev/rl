@@ -11,6 +11,8 @@ use burn::{
 
 use crate::tictactoe::*;
 
+pub use self::{dataset::*, train::*};
+
 #[derive(Debug, Config)]
 pub struct TicTacToeNetworkConfig {}
 impl TicTacToeNetworkConfig {
@@ -28,12 +30,12 @@ pub struct TicTacToeNetwork<B: Backend> {
 }
 impl<B: Backend> TicTacToeNetwork<B> {
     pub fn init(device: &B::Device) -> Self {
-        // -1 opponent, 1 self, 0empty
-        let channel_count = 1;
+        const INPUT_SIZE: usize = Cell::VARIANT_COUNT * ROW_COUNT * COLUMN_COUNT;
+        const OUTPUT_SIZE: usize = ROW_COUNT * COLUMN_COUNT;
         Self {
-            input: LinearConfig::new(channel_count * ROW_COUNT * COLUMN_COUNT, 64).init(device),
+            input: LinearConfig::new(INPUT_SIZE, 64).init(device),
             hidden: LinearConfig::new(64, 64).init(device),
-            output: LinearConfig::new(64, ROW_COUNT * COLUMN_COUNT).init(device),
+            output: LinearConfig::new(64, OUTPUT_SIZE).init(device),
             activation: Relu,
         }
     }

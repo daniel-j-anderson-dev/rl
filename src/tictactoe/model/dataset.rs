@@ -2,16 +2,23 @@ use burn::{Tensor, data::dataloader::batcher::Batcher, prelude::Backend};
 
 use crate::tictactoe::{grid::GameOver, *};
 
+pub fn dataset() -> Vec<(Grid, Index)> {
+    Grid::all()
+        .filter_map(|grid| {
+            grid.is_valid()
+                .then(|| (grid, grid.find_best_move(Player::X)))
+        })
+        .collect::<Vec<_>>()
+}
+
 impl Grid {
     /// minimax: https://en.wikipedia.org/wiki/Minimax#Combinatorial_game_theory
-    pub fn find_best_move(&self, player: Cell) -> Index {
-        assert!(player != Empty);
-
+    pub fn find_best_move(&self, player: Player) -> Index {
         let mut best_score = if player == X { i32::MIN } else { i32::MAX };
         let mut best_move = I00;
         for &i in Index::ALL.iter().filter(|&&i| self[i] == Empty) {
             let mut next_grid = *self;
-            next_grid[i] = player;
+            next_grid[i] = player.into();
 
             let score = next_grid.minimax(player == O);
 
@@ -92,6 +99,7 @@ impl Index {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct TicTacToeBatch<B: Backend> {
     /// Shape: [batch_size, row_count, column_count]
     pub inputs: Tensor<B, 3>,
@@ -99,7 +107,8 @@ pub struct TicTacToeBatch<B: Backend> {
     pub targets: Tensor<B, 2>,
 }
 
-pub struct TicTacToeBatcher {}
+#[derive(Debug, Clone, Copy)]
+pub struct TicTacToeBatcher;
 
 impl<B: Backend> Batcher<B, (Grid, Index), TicTacToeBatch<B>> for TicTacToeBatcher {
     fn batch(

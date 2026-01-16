@@ -4,9 +4,13 @@ pub mod index;
 pub mod model;
 
 pub use self::{
-    cell::Cell::{self, *},
+    cell::{
+        Cell::{self, *},
+        Player,
+    },
     grid::Grid,
     index::Index::{self, *},
+    model::*,
 };
 
 pub const ROW_COUNT: usize = 3;
