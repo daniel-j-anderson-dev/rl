@@ -36,7 +36,7 @@ pub fn encode_grid<B: Backend>(device: &B::Device, grid: &Grid) -> Tensor<B, 3> 
                     })
                 })
                 .collect(),
-            [2, 3, 3],
+            Grid::SHAPE,
         ),
         device,
     )

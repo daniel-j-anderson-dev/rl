@@ -19,8 +19,8 @@ pub struct Grid {
 impl Grid {
     pub const AREA: usize = 9;
     pub const SIZE: usize = 3;
-    pub const RANK: usize = 2;
-    pub const SHAPE: [usize; Self::RANK] = [Self::SIZE, Self::SIZE];
+    pub const RANK: usize = 3;
+    pub const SHAPE: [usize; Self::RANK] = [2, Self::SIZE, Self::SIZE];
 
     pub fn from_cells<A: AsRef<[Cell]>>(cells: A) -> Option<Self> {
         let cells = cells.as_ref();
