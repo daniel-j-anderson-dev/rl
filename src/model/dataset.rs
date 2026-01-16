@@ -111,7 +111,7 @@ impl<B: Backend> Batcher<B, (Grid, Index), TicTacToeBatch<B>> for TicTacToeBatch
             (Vec::new(), Vec::new()),
             |(mut items, mut targets), (grid, best_move)| {
                 items.push(Tensor::<B, 2, _>::from_data(
-                    grid.perspective_view(grid.current_turn()),
+                    grid.encode(grid.current_turn()),
                     device,
                 ));
                 targets.push(Tensor::<_, 1, _>::from_data(
