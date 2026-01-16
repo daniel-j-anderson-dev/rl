@@ -1,5 +1,4 @@
 use constcat::concat_slices;
-type X = [Index; 3];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Index {
