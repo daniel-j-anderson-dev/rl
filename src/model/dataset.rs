@@ -38,3 +38,5 @@ pub struct TicTacToeBatch<B: Backend> {
     /// targets[b][1] == the index where `O` should be placed
     pub targets: Tensor<B, 3, Int>,
 }
+
+pub struct TicTacToeBatcher {}
