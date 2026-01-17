@@ -30,7 +30,8 @@ pub struct TicTacToeNetwork<B: Backend> {
 }
 impl<B: Backend> TicTacToeNetwork<B> {
     pub fn init(device: &B::Device) -> Self {
-        const INPUT_SIZE: usize = Cell::VARIANT_COUNT * ROW_COUNT * COLUMN_COUNT;
+        const CHANNEL_COUNT: usize = 1;
+        const INPUT_SIZE: usize = CHANNEL_COUNT * ROW_COUNT * COLUMN_COUNT;
         const OUTPUT_SIZE: usize = ROW_COUNT * COLUMN_COUNT;
         Self {
             input: LinearConfig::new(INPUT_SIZE, 64).init(device),
