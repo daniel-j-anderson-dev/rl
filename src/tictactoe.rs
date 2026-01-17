@@ -22,7 +22,7 @@ fn train_tic_tac_toe_model() {
 
     train::<Autodiff<Wgpu>>(
         "./artifacts",
-        TrainingConfig::new(TicTacToeNetworkConfig::new(), AdamConfig::new(), Player::X),
+        TrainingConfig::new(TicTacToeNetworkConfig::new(), AdamConfig::new(), Player::X).with_num_epochs(1000),
         Default::default(),
     )
     .unwrap();
